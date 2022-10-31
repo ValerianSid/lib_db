@@ -94,56 +94,143 @@ truncate archive restart identity cascade;
 delete from shelf;
 truncate shelf restart identity cascade;
 
+drop table archive cascade;
+drop table author cascade;
+drop table book cascade;
+drop table poem cascade;
+drop table book_case cascade;
+drop table shelf cascade;
 
-insert into author values(nextval('author_id_seq'), 'Лев', 'Толстой', 'Николаевич', '09.09.1828');
-insert into archive values(nextval('archive_id_seq'), '1');
-insert into author (last_name) values('Народ');
+--новвая таблица от Ори
+create table if not exists archive(
+	id bigserial primary key,
+	number varchar(128)
+);
 
+create table if not exists book_case(
+	id bigserial primary key,
+	number varchar(128),
+	archive_id int8,
+	constraint arc_id_fk foreign key (archive_id) references archive(id)
+);
 
+create table if not exists shelf(
+	id bigserial primary key,
+	number varchar(128),
+	book_case_id int8,
+	constraint book_case_id_fk foreign key (book_case_id) references book_case(id)
+);
 
+create table if not exists author(
+	id bigserial primary key,
+	first_name varchar(32),
+	last_name varchar(32),
+	middle_name varchar(32),
+	birthdate date
+);
+
+create table if not exists book(
+	id bigserial primary key,
+	name varchar(128),
+	producer varchar(128),
+	date date,
+	number int8,
+	a_id int8,
+	constraint a_id_fk foreign key (a_id) references author(id),
+	shelf_id int8,
+	constraint shelf_id_fk foreign key (shelf_id) references shelf(id)
+);
+
+create table if not exists poem(
+	id bigserial primary key,
+	name varchar(128),
+	content text,
+	date date,
+	a_id int8,
+	constraint a_id_fk foreign key (a_id) references author(id),
+	book_id int8,
+	constraint book_id_fk foreign key (book_id) references book(id)
+);
+
+-- очистка таблицы
+
+truncate author restart identity cascade;
+truncate archive restart identity cascade;
+
+--заполнение таблицы
+
+insert into author values (nextval('author_id_seq'), 'Лев','Толстой','Николаевич');
 insert into author values (nextval('author_id_seq'), 'Энест','Хемингуэй');
+insert into author values (nextval('author_id_seq'), 'Брэм','Стокер');
+insert into author values (nextval('author_id_seq'), 'Мэри','Шелли');
+insert into author values (nextval('author_id_seq'), 'Джордж','Оруэлл');
+insert into author values (nextval('author_id_seq'), 'Говард','Лавкрафт');
+insert into author values (nextval('author_id_seq'), 'Эдгар','По','Аллан');
+insert into author values (nextval('author_id_seq'), 'Стивен','Кинг');
+insert into author values (nextval('author_id_seq'), 'Густав','Майринк');
+
+insert into poem (name, content, date, a_id) values ('Анна Коренина','Anna Corenina', '24.02.1870', 1);
 insert into poem (name, content, date, a_id) values ('Старик и море','the Old man and the Sea', '24.02.1952', 2);
 insert into poem (name, content, date, a_id) values ('Зелёные холмы Африки','Green Hills of Africa', '24.02.1935', 2);
-
-insert into author values (nextval('author_id_seq'), 'Брэм','Стокер');
 insert into poem (name, content, date, a_id) values ('Дра́кула','Dracule', '24.02.1897', 3);
-
-insert into author values (nextval('author_id_seq'), 'Мэри','Шелли');
 insert into poem (name, content, date, a_id) values ('Франкенштейн','Франкенштейн, или Современный Прометей', '24.02.1818', 4);
-
-insert into author values (nextval('author_id_seq'), 'Джордж','Оруэлл');
 insert into poem (name, content, date, a_id) values ('1984','1984', '24.02.1949', 5);
 insert into poem (name, content, date, a_id) values ('Скотный двор','Скотный двор', '24.02.1945', 5);
-
-insert into author values (nextval('author_id_seq'), 'Говард','Лавкрафт');
 insert into poem (name, content, date, a_id) values ('Крысы в стенах','Крысы в стенах', '24.02.1923', 6);
-
-
-insert into author values (nextval('author_id_seq'), 'Эдгар','По','Аллан');
 insert into poem (name, content, date, a_id) values ('Золотой жук','Золотой жук', '24.02.1843', 7);
-
-insert into author values (nextval('author_id_seq'), 'Стивен','Кинг');
 insert into poem (name, content, date, a_id) values ('Безнадёга','Безнадёга', '24.02.1996', 8);
-insert into poem (name, content, date, a_id) values ('Оно','IT', '24.02.1986', 8);
-
-insert into author values (nextval('author_id_seq'), 'Густав','Майринк');
+insert into poem (name, content, date, a_id) values ('Оно','IT', '24.02.1986',8 );
 insert into poem (name, content, date, a_id) values ('Голем','Безнадёга', '24.02.1914', 9);
 
 
-insert into archive  values (nextval('archive_id_seq'), '1');
-insert into archive  values (nextval('archive_id_seq'), '2');
+insert into archive  values (nextval('archive_id_seq'), 'Numb.1');
+insert into archive  values (nextval('archive_id_seq'), 'Numb.2');
+
+insert into book_case values (nextval('book_case_id_seq'),'BC.N.1_1', 1);
+insert into book_case values (nextval('book_case_id_seq'),'BC.N.1_2', 1);
+insert into book_case values (nextval('book_case_id_seq'),'BC.N.2_1', 2);
+insert into book_case values (nextval('book_case_id_seq'),'BC.N.2_2', 2);
+
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.1_1_1', 1);
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.1_1_2', 1);
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.1_2_1', 2);
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.1_2_2', 2);
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.2_1_1', 3);
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.2_1_2', 3);
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.2_2_1', 4);
+insert into shelf values (nextval('shelf_id_seq'),'Shelf.N.2_2_2', 4);
+
+insert into book values (nextval('book_id_seq'),'Книга1','prod1','24.02.1952',1,1,1);
+insert into book values (nextval('book_id_seq'),'Книга2','prod2','24.02.1935',2,2,1);
+insert into book values (nextval('book_id_seq'),'Книга3','prod3','24.02.1897',2,2,1);
+insert into book values (nextval('book_id_seq'),'Книга4','prod4','24.02.1818',3,3,1);
+insert into book values (nextval('book_id_seq'),'Книга5','prod5','24.02.1949',4,4,1);
+insert into book values (nextval('book_id_seq'),'Книга6','prod6','24.02.1945',5,5,1);
+insert into book values (nextval('book_id_seq'),'Книга7','prod7','24.02.1923',5,5,1);
+insert into book values (nextval('book_id_seq'),'Книга8','prod8','24.02.1843',6,6,1);
+insert into book values (nextval('book_id_seq'),'Книга9','prod9','24.02.1996',7,7,1);
+insert into book values (nextval('book_id_seq'),'Книга10','prod10','24.02.1986',7,8,1);
+insert into book values (nextval('book_id_seq'),'Книга11','prod11','24.02.1914',8,8,1);
+
+update author set birthdate ='28.08.1828' where last_name = 'Толстой';
+update author set birthdate ='02.06.1961' where last_name = 'Хемингуэй';
+update author set birthdate ='8.11.1847' where last_name = 'Стокер';
+update author set birthdate ='30.08.1797' where last_name = 'Шелли';
+update author set birthdate ='25.06.1903' where last_name = 'Оруэлл';
+update author set birthdate ='20.08.1890' where last_name = 'Лавкрафт';
+update author set birthdate ='19.01.1809' where last_name = 'По';
+update author set birthdate ='21.09.1947' where last_name = 'Кинг';
+update author set birthdate ='19.01.1868' where last_name = 'Майринк'; 
 
 
-insert into book_case values (nextval('book_case_id_seq'),'1', 1);
-insert into book_case values (nextval('book_case_id_seq'),'2', 1);
-insert into book_case values (nextval('book_case_id_seq'),'1', 2);
-insert into book_case values (nextval('book_case_id_seq'),'2', 2);
+select * from poem p where p."date" > '01.01.1900' and p."date" < '01.01.1951';
 
-insert into shelf values (nextval('shelf_id_seq'),'11', 1);
-insert into shelf values (nextval('shelf_id_seq'),'12', 1);
-insert into shelf values (nextval('shelf_id_seq'),'21', 2);
-insert into shelf values (nextval('shelf_id_seq'),'22', 2);
-insert into shelf values (nextval('shelf_id_seq'),'11', 1);
-insert into shelf values (nextval('shelf_id_seq'),'12', 1);
-insert into shelf values (nextval('shelf_id_seq'),'21', 2);
-insert into shelf values (nextval('shelf_id_seq'),'22', 2);
+select p."name" , a.first_name , a.last_name , p."date"  from poem p, author a  where p."date" > '01.01.1900' and p."date" < '01.01.1951' and p.a_id = a.id; 
+
+select * from book b where b.producer = 'prod3';
+
+select a.last_name , p."name"  from author a , poem p where a.last_name = 'Кинг' and p.a_id = a.id; 
+
+select * from poem p where p.a_id in (select a.id from author a where a.last_name  = 'Кинг');
+
+select * from poem p where p.book_id in (select b.id from book b where b.producer  ='prod7');

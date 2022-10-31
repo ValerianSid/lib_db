@@ -79,7 +79,71 @@ alter table poem alter column content set not null;
 
 alter table author alter column last_name set not null;
 
+--вставка данных
+
+delete from poem;
+truncate poem restart identity;
+delete from author;
+truncate author restart identity cascade;
+delete from book;
+truncate book restart identity;
+delete from book_case;
+truncate book_case restart identity cascade;
+delete from archive;
+truncate archive restart identity cascade;
+delete from shelf;
+truncate shelf restart identity cascade;
+
 
 insert into author values(nextval('author_id_seq'), 'Лев', 'Толстой', 'Николаевич', '09.09.1828');
 insert into archive values(nextval('archive_id_seq'), '1');
 insert into author (last_name) values('Народ');
+
+
+
+insert into author values (nextval('author_id_seq'), 'Энест','Хемингуэй');
+insert into poem (name, content, date, a_id) values ('Старик и море','the Old man and the Sea', '24.02.1952', 2);
+insert into poem (name, content, date, a_id) values ('Зелёные холмы Африки','Green Hills of Africa', '24.02.1935', 2);
+
+insert into author values (nextval('author_id_seq'), 'Брэм','Стокер');
+insert into poem (name, content, date, a_id) values ('Дра́кула','Dracule', '24.02.1897', 3);
+
+insert into author values (nextval('author_id_seq'), 'Мэри','Шелли');
+insert into poem (name, content, date, a_id) values ('Франкенштейн','Франкенштейн, или Современный Прометей', '24.02.1818', 4);
+
+insert into author values (nextval('author_id_seq'), 'Джордж','Оруэлл');
+insert into poem (name, content, date, a_id) values ('1984','1984', '24.02.1949', 5);
+insert into poem (name, content, date, a_id) values ('Скотный двор','Скотный двор', '24.02.1945', 5);
+
+insert into author values (nextval('author_id_seq'), 'Говард','Лавкрафт');
+insert into poem (name, content, date, a_id) values ('Крысы в стенах','Крысы в стенах', '24.02.1923', 6);
+
+
+insert into author values (nextval('author_id_seq'), 'Эдгар','По','Аллан');
+insert into poem (name, content, date, a_id) values ('Золотой жук','Золотой жук', '24.02.1843', 7);
+
+insert into author values (nextval('author_id_seq'), 'Стивен','Кинг');
+insert into poem (name, content, date, a_id) values ('Безнадёга','Безнадёга', '24.02.1996', 8);
+insert into poem (name, content, date, a_id) values ('Оно','IT', '24.02.1986', 8);
+
+insert into author values (nextval('author_id_seq'), 'Густав','Майринк');
+insert into poem (name, content, date, a_id) values ('Голем','Безнадёга', '24.02.1914', 9);
+
+
+insert into archive  values (nextval('archive_id_seq'), '1');
+insert into archive  values (nextval('archive_id_seq'), '2');
+
+
+insert into book_case values (nextval('book_case_id_seq'),'1', 1);
+insert into book_case values (nextval('book_case_id_seq'),'2', 1);
+insert into book_case values (nextval('book_case_id_seq'),'1', 2);
+insert into book_case values (nextval('book_case_id_seq'),'2', 2);
+
+insert into shelf values (nextval('shelf_id_seq'),'11', 1);
+insert into shelf values (nextval('shelf_id_seq'),'12', 1);
+insert into shelf values (nextval('shelf_id_seq'),'21', 2);
+insert into shelf values (nextval('shelf_id_seq'),'22', 2);
+insert into shelf values (nextval('shelf_id_seq'),'11', 1);
+insert into shelf values (nextval('shelf_id_seq'),'12', 1);
+insert into shelf values (nextval('shelf_id_seq'),'21', 2);
+insert into shelf values (nextval('shelf_id_seq'),'22', 2);

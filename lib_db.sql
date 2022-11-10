@@ -270,3 +270,10 @@ select b.id  from book b where b.shelf_id  in (
 select s.id from shelf s where s.book_case_id in (
 select bc.id from book_case bc where bc.archive_id in (
 select id from archive a2 where number = 'Numb.1'))));
+
+drop view twenty_century;
+
+create view twenty_century (book_name, author_firstname, author_lastname, author_middlename, poem_name, poem_date)
+as
+select b."name" as book_name, a.first_name , a.last_name , a.middle_name,  p."name" , p."date" from book b full outer join author a on b.a_id = a.id 
+full outer join poem p on p.a_id = a.id where p."date" > '01.01.1900';

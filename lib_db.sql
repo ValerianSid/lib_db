@@ -275,5 +275,5 @@ drop view twenty_century;
 
 create view twenty_century (book_name, author_firstname, author_lastname, author_middlename, poem_name, poem_date)
 as
-select b."name" as book_name, a.first_name , a.last_name , a.middle_name,  p."name" , p."date" from book b full outer join author a on b.a_id = a.id 
-full outer join poem p on p.a_id = a.id where p."date" > '01.01.1900';
+select b."name" as book_name, a.first_name , a.last_name , a.middle_name,  p."name" , p."date" from book b join author a on b.a_id = a.id 
+join poem p on p.a_id = a.id where p."date" > '01.01.1900';

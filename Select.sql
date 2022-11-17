@@ -40,3 +40,71 @@ language sql;
 select new_pp(pp.number) from parking_place pp ; 
 
 
+create function up_date(num int8) returns void as
+$BODY$
+declare
+d date;
+begin
+select o.date_to from orders o where o.id = num into d; 
+if d < now() then 
+update orders set overtime = true where o.id = num;
+end if;
+end;
+$BODY$
+language plpgsql;
+
+create function new_up_date(int8) returns void as
+$BODY$
+declare
+temp boolean;
+begin
+select overtime from orders o where o.id = $1 into temp;
+if temp = true then
+update orders 
+set overtime = false,
+date_to = now() + interval '1 DAY'
+where id = $1;
+end if;
+end;
+$BODY$
+language plpgsql;
+
+select new_up_date(o.id) from orders o; 
+
+create function make_overtime_true(int8) returns void as
+$BODY$
+declare
+temp boolean;
+begin
+select overtime from orders o where o.id = $1 into temp;
+if temp = false then
+update orders 
+set overtime = true,
+date_to = now() - interval '1 DAY'
+where id = $1;
+end if;
+end;
+$BODY$
+language plpgsql;
+
+select make_overtime_true(o.id) from orders o; 
+
+create or replace function make_place_free() returns setof orders as
+$body$
+declare temp orders;
+begin 
+for temp in select * from orders where overtime = true 
+loop 
+update orders set overtime = false,
+date_to = null 
+where orders.id = temp.id;
+update parking_place set car_id = null 
+where floor = temp.parking_place_floor and number = temp.parking_place_number;
+return next temp;
+end loop;
+end;
+$body$
+language plpgsql;
+
+select make_place_free();
+

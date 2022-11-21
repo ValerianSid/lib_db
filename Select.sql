@@ -108,3 +108,37 @@ language plpgsql;
 
 select make_place_free();
 
+create or replace function make_place_free_new() returns setof orders as
+$body$
+declare temp orders;
+begin 
+for temp in select * from orders where overtime = true 
+loop 
+update orders set overtime = false,
+date_to = null 
+where orders.id = temp.id;
+update parking_place set car_id = null 
+where floor = temp.parking_place_floor and number = temp.parking_place_number;
+select t.parking_place_floor, t.parking_place_number from temp t;
+end loop;
+end;
+$body$
+language plpgsql;
+
+select make_place_free_new();
+
+create index idx_parking_user_login
+on parking_user(login);
+
+explain select * from parking_user pu where login = 'Den';
+select * from parking_user pu where login = 'Den';
+
+select parking_place_number, parking_place_floor,date_to from orders
+group by date_to, parking_place_number, parking_place_floor 
+order by date_to;
+
+select date_to, count(*) from orders
+group by date_to; 
+
+select "role", count(*)  from parking_user
+group by "role";
